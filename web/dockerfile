@@ -1,0 +1,24 @@
+# Use an official Node.js runtime as the base image
+FROM node:16.14.2
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json to the container
+COPY package*.json ./
+
+# Install project dependencies
+RUN npm install
+
+# Copy the rest of your Nuxt.js application
+COPY . .
+
+# Build your Nuxt.js project
+RUN yarn build
+
+# Expose the port your Nuxt.js app will run on (default is 3000)
+ENV HOST 0.0.0.0
+EXPOSE 3000
+
+# Start your Nuxt.js application
+CMD [ "yarn", "start" ]

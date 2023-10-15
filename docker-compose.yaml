@@ -1,0 +1,15 @@
+version: '3'
+services:
+  be:
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "1323:1323"
+  fe:
+    build:
+      context: ./web
+      dockerfile: dockerfile
+    ports:
+      - "3000:3000"
+    restart: always
