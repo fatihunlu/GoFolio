@@ -8,17 +8,17 @@
       </div>
       <div class="justify-center">
         <div class="m-20">
-          <stock-table/>
+          <div>section 2</div>
         </div>
       </div>
       <div class="justify-center">
         <div class="m-20">
-          <stock-table/>
+          <div>section 3</div>
         </div>
       </div>
       <div class="justify-center">
         <div class="m-20">
-          <stock-table/>
+          <div>section 4</div>
         </div>
       </div>
     </div>
