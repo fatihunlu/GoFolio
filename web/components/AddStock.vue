@@ -7,14 +7,48 @@
         <div class="flex flex-row justify-between mt-4">
           <span></span>
           <span class="text-[22px] text-[#9b45b2]">Add Stock</span>
-          <svg width="20px" height="20px" class="mt-1 mr-[30px] cursor-pointer hover:bg-opacity-75" @click="close" viewBox="0 0 24 24"
-            fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="20px" height="20px" class="mt-1 mr-[30px] cursor-pointer hover:bg-opacity-75" @click="close"
+            viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M20 20L4 4.00003M20 4L4.00002 20" stroke="#9b45b2" stroke-width="2" stroke-linecap="round" />
           </svg>
         </div>
 
-        <div>
-          <stock-dropdown></stock-dropdown>
+        <div class="flex flex-col h-full justify-between">
+          <div>
+            <div class="flex flex-row justify-center items-center mt-4">
+              <div class="w-5/6">
+                <stock-dropdown @selected="selectedData" :ignoredList="selectedItemIds"
+                  :clearInputWhenClicked="false">
+                </stock-dropdown>
+              </div>
+            </div>
+
+            <div class="flex justify-center w-full mt-4">
+              <div class="flex items-center justify-center w-5/6">
+                <div class="w-full mr-4">
+                  <input v-model="price" type="number"
+                    class="border border-gray-400 text-gray-900 text-sm rounded-lg focus:border-indigo-600 block w-full p-2.5"
+                    placeholder="price">
+                </div>
+                <div class="w-full ml-4">
+                  <input v-model="count" type="number" 
+                    class="border border-gray-400 text-gray-900 text-sm rounded-lg focus:border-indigo-600 block w-full p-2.5"
+                    placeholder="count">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mb-6">
+            <div class="flex justify-center w-full">
+              <div class="flex items-center justify-center w-5/6">
+                <div align="center" class="w-4/6">
+                  <button class="flex justify-center items-center rounded-[12px] bg-[#9b45b2] w-5/6 h-[36px]">
+                    <span class="text-[#fff] text-base">Save</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -31,12 +65,18 @@ export default {
   },
   data() {
     return {
-      quantity: null
+      count: 1,
+      price: 0,
+      selectedItemIds: [],
+      selectedItem: null
     }
   },
   methods: {
     close() {
       this.$emit('close');
+    },
+    selectedData(value) {
+      this.selectedItem = value
     },
   },
 };
@@ -54,4 +94,5 @@ export default {
 .modal {
   box-shadow: 0 3px 20px 0 rgba(59, 64, 87, 0.22);
   border-radius: 6px;
-}</style>
+}
+</style>
