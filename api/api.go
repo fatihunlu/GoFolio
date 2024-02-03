@@ -3,41 +3,12 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"gofolio/services"
 	"io"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
-
-type StockResponse struct {
-	Chart Chart `json:"chart"`
-}
-
-type Chart struct {
-	Result []Result `json:"result"`
-	Error  string   `json:"error"`
-}
-
-type Result struct {
-	Meta Meta `json:"meta"`
-}
-
-type Meta struct {
-	Currency           string  `json:"currency"`
-	Symbol             string  `json:"symbol"`
-	RegularMarketPrice float32 `json:"regularMarketPrice"`
-}
-
-type SearchResponse struct {
-	Quotes []Quote `json:"quotes"`
-}
-
-type Quote struct {
-	Exchange  string `json:"exchange"`
-	Symbol    string `json:"symbol"`
-	QuoteType string `json:"quoteType"`
-	ShortName string `json:"shortname"`
-}
 
 type Controller interface {
 	Routes(r *echo.Group)
@@ -48,7 +19,7 @@ func InitRoutes(e *echo.Group) {
 	api := e.Group("")
 	api.GET("/stock", getStockInfo)
 	api.GET("/search", search)
-
+	api.POST("/save", save)
 }
 
 func getStockInfo(c echo.Context) error {
@@ -75,7 +46,7 @@ func getStockInfo(c echo.Context) error {
 		return err
 	}
 
-	var stockRsp StockResponse
+	var stockRsp services.StockResponse
 	err = json.Unmarshal(bodyBytes, &stockRsp)
 	if err != nil {
 		return err
@@ -105,11 +76,27 @@ func search(c echo.Context) error {
 		return err
 	}
 
-	var searchRsp SearchResponse
+	var searchRsp services.SearchResponse
 	err = json.Unmarshal(bodyBytes, &searchRsp)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(http.StatusOK, searchRsp)
+}
+
+func save(c echo.Context) error {
+	sItem := new(services.StockItem)
+	if err := c.Bind(sItem); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	id, _ := services.InsertStock(*sItem)
+
+	return c.JSON(http.StatusOK, id)
+	// insertID, err := services.InsertUser(*user)
+	// if err != nil {
+	// 	return c.JSON(http.StatusBadRequest, err)
+	// }
+	// return c.JSON(http.StatusOK, insertID)
 }
