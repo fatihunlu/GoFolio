@@ -6,10 +6,29 @@ services:
       dockerfile: dockerfile
     ports:
       - "1323:1323"
+    networks: 
+      - gofolio-network
   fe:
     build:
       context: ./web
       dockerfile: dockerfile
     ports:
-      - "3000:3000"
+      - "5173:5173"
+    networks: 
+      - gofolio-network
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb-container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword123
+    ports:
+      - "3306:3306"
+    # volumes:
+    #   - ./data:/var/lib/mysql
     restart: always
+    networks: 
+      - gofolio-network
+
+networks:
+  gofolio-network:
+    external: true
