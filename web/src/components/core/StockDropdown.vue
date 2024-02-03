@@ -20,57 +20,45 @@
         </aside>
     </div>
 </template>
-<script>
+<script setup>
+import { ref, computed, watch } from 'vue'
+import axios from 'axios'
 
-export default {
-    name: "StockDropdown",
-    data() {
-        return {
-            search: "",
-            selectedItem: null,
-            showSearchItems: false,
-            isMouseOverList: false,
-            searchItemList: [],
-            ignoredList: []
-        };
-    },
-    watch: {
-        search: function (newVal, oldVal) {
-            if (newVal == null || newVal == '' || this.selectedItem != null) {
-                return;
-            }
 
-            // TODO
-            this.$axios.get(`http://localhost:1323/search?q=${this.search}`)
-                .then(response => {
-                    this.searchItemList = response.data.quotes;
-                    this.showSearchItems = true;
-                })
-                .catch(err => {
-                    console.error(err)
-                    return [];
-                })
+const emit = defineEmits(['selected'])
+const search = ref('')
+const selectedItem = ref()
+const showSearchItems = ref(false)
+const searchItemList = ref([])
 
-        },
-    },
-    methods: {
-        selectSearchItem(item) {
-            this.search = item.symbol;
-            this.selectedItem = item;
-            this.showSearchItems = false;
-            this.$emit('selected', item)
-        },
 
-        clear() {
-            this.search = '';
-            this.selectedItem = null;
-        }
+watch(search, (newVal) => {
+    if (newVal == null || newVal == '' || selectedItem.value != null) {
+        return;
+    }
 
-    },
+    axios.get(`${import.meta.env.VITE_APIURL}/search?q=${search.value}`)
+        .then(response => {
+            searchItemList.value = response.data.quotes;
+            showSearchItems.value = true;
+        })
+        .catch(err => {
+            console.error(err)
+            return [];
+        })
+})
 
-    created() {
-    },
+function selectSearchItem(item) {
+    search.value = item.symbol;
+    selectedItem.value = item;
+    showSearchItems.value = false;
+    emit('selected', item)
+}
 
-};
+function clear() {
+    search.value = '';
+    selectedItem.value = null;
+}
+
 </script>
 <style></style>

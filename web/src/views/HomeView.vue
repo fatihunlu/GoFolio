@@ -25,13 +25,12 @@
   </div>
 </template>
 
-<script>
-import StockTable from '../components/StockTable.vue'
+<script setup>
 
-export default {
-  name: 'IndexPage',
-    components: [
-        StockTable  
-    ]
-}
+import { ref, computed } from 'vue'
+import StockTable from '@/components/StockTable.vue'
+const showAddStock = ref(false)
+
+
+
 </script>

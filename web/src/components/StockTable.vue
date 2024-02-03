@@ -54,21 +54,10 @@
     </div>
 </template>
   
-<script>
+<script setup>
+import { ref } from 'vue'
 import AddStock from './AddStock.vue';
 
-export default {
-    name: 'StockTable',
-    components: {
-        AddStock
-    },
-    data() {
-        return {
-            showAddStock: false
-        }
-    },
-    methods: {
-    }
-}
+const showAddStock = ref(false)
 </script>
   

@@ -17,8 +17,7 @@
           <div>
             <div class="flex flex-row justify-center items-center mt-4">
               <div class="w-5/6">
-                <stock-dropdown @selected="selectedData" :ignoredList="selectedItemIds"
-                  :clearInputWhenClicked="false">
+                <stock-dropdown @selected="selectData">
                 </stock-dropdown>
               </div>
             </div>
@@ -26,12 +25,12 @@
             <div class="flex justify-center w-full mt-4">
               <div class="flex items-center justify-center w-5/6">
                 <div class="w-full mr-4">
-                  <input v-model="price" type="number"
+                  <input v-model="price" step="0.01" type="number" min="0"
                     class="border border-gray-400 text-gray-900 text-sm rounded-lg focus:border-indigo-600 block w-full p-2.5"
                     placeholder="price">
                 </div>
                 <div class="w-full ml-4">
-                  <input v-model="count" type="number" 
+                  <input v-model="count" type="number" min="0"
                     class="border border-gray-400 text-gray-900 text-sm rounded-lg focus:border-indigo-600 block w-full p-2.5"
                     placeholder="count">
                 </div>
@@ -42,7 +41,9 @@
             <div class="flex justify-center w-full">
               <div class="flex items-center justify-center w-5/6">
                 <div align="center" class="w-4/6">
-                  <button class="flex justify-center items-center rounded-[12px] bg-[#9b45b2] w-5/6 h-[36px]">
+                  <button @click="save" class="flex justify-center items-center rounded-[12px] bg-[#9b45b2]  w-5/6 h-[36px]"
+                      :class="[ isValid ? 'opacity-100' : 'opacity-40' ]"
+                      :disabled="!isValid">
                     <span class="text-[#fff] text-base">Save</span>
                   </button>
                 </div>
@@ -54,32 +55,44 @@
     </div>
   </div>
 </template>
-<script>
+<script setup>
 
+import { ref, computed } from 'vue'
+import axios from 'axios'
 import StockDropdown from './core/StockDropdown.vue';
 
-export default {
-  name: 'AddStock',
-  components: {
-    StockDropdown
-  },
-  data() {
-    return {
-      count: 1,
-      price: 0,
-      selectedItemIds: [],
-      selectedItem: null
-    }
-  },
-  methods: {
-    close() {
-      this.$emit('close');
-    },
-    selectedData(value) {
-      this.selectedItem = value
-    },
-  },
-};
+const emit = defineEmits(['close'])
+
+const count = ref(null)
+const price = ref(null)
+const selectedItem = ref(null)
+
+const isValid = computed(() => {
+  return count.value > 0 && price.value > 0 && selectedItem.value != null
+})
+
+function close() {
+  emit('close');
+}
+function selectData(value) {
+  selectedItem.value = value
+}
+function save() {
+    const obj = {
+      count: count.value,
+      price: price.value,
+      symbol: selectedItem.value.symbol,
+      exchange: selectedItem.value.exchange
+    };
+
+      axios.post(`${import.meta.env.VITE_APIURL}/save`, obj)
+        .then(response => {
+          console.log('theaa response => ', response)
+        })
+        .catch(err => {
+          console.error(err)
+        })
+}
 </script>
 <style>
 .custom-text {
